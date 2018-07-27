@@ -8,11 +8,13 @@ O nosso trabalho tem como objetivo a criação de um bot para a aplicação Disc
 
 Este bot estará num servidor á parte numa sala, onde os jogadores se quiserem jogar bastarão clicar nesta “sala” e ao dar o nome de um destes jogos poderão iniciar um jogo com o bot.
 
-A aplicação incluirá:
+<hr>
+
+#### A aplicação incluirá:
 
 * Servidor próprio
 
-Jogos:
+#### Jogos:
 
 * Bingo
 
@@ -22,7 +24,7 @@ Jogos:
 
 * Jogo da galinha.
 
-Utilidades:
+#### Utilidades:
 
 * Gestão de roles
 
