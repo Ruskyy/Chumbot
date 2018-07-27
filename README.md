@@ -1,8 +1,8 @@
 # Chumbot
 
-Bem vindos ao Chumbot
+Bem vindos ao Chumbot, o primeiro BOT de discord baseado no Dário !
 
-## Descrição do projecto
+###  Descrição do projecto
 
 O nosso trabalho tem como objetivo a criação de um bot para a aplicação Discord, onde um jogador ou diversos poderão jogar e competir com ele ou entre si.
 
