@@ -1,5 +1,5 @@
 # Chumbot
-
+teste
 Bem vindos ao Chumbot, o primeiro BOT de discord baseado no Dário !
 
 ###  Descrição do projecto
