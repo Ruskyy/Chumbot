@@ -7,7 +7,7 @@ from discord.ext.commands import Bot
 
 BOT_PREFIX = ("?","!")
 
-TOKEN = 'NDcxNDk4MzAzNDMxNzcwMTIy.DjlufQ.cHeECWNsstZAI7pUtveQyRg4Ttc'
+TOKEN = ''
 
 bot = Bot(command_prefix=BOT_PREFIX)
 
