@@ -2,12 +2,18 @@ import random
 import os
 import aiohttp
 import json
-from discord import *
+import time
+import datetime
+import discord
+from discord.ext import commands
 from discord.ext.commands import Bot
 
 BOT_PREFIX = ("?","!")
+#Timestamp
+ts = time.time()
+lastboot = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
-TOKEN = ''
+TOKEN = 'NDcxNDk4MzAzNDMxNzcwMTIy.Dj0Yuw.g6KumUnYWn-A7P-mREODg1Fd1OQ'
 
 bot = Bot(command_prefix=BOT_PREFIX)
 
@@ -32,6 +38,17 @@ async def bitcoin():
         response = await raw_response.text()
         response = json.loads(response)
         await bot.say("O valor e de: " + response['bpi']['EUR']['rate']+"€ \nQuero "+str(random.randint(1,10)+1)+"!")
+
+@bot.command()
+async def sobre():
+    print("Sobre")
+    embed = discord.Embed(title="Chumbot", description="Basicamente o dario no corpo de um bot", color=0x3498db, type="rich")
+    embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/471500310133604352/471500693539258386/qw.png")
+    embed.add_field(name="Autores", value="Rusky#0001 and AnaG#2174")
+    embed.add_field(name="Online desde:", value=lastboot);
+    embed.add_field(name="Convite:", value="[Link](https://discordapp.com/api/oauth2/authorize/471498303431770122)")
+    embed.set_footer(text="Chumbados")
+    await bot.say(embed=embed)
 
 # @client.event
 # async def on_message(message):
@@ -62,11 +79,11 @@ async def on_ready():
     os.system('cls' if os.name == 'nt' else 'clear') #Limpa a consola
     print('+--------------------------+')
     print('Sessao iniciada como: ' + bot.user.name )
-    print('ID:' + bot.user.id)
+    print('ID:' + str(bot.user.id))
     print('Token: ' + TOKEN)
     print('----------------------------')
     print('Lista de comandos invocados')
     print('----------------------------')
-    await bot.change_presence(game=Game(name="with code"))
+    await bot.change_presence(game=discord.Game(name="with code"))
 
 bot.run(TOKEN)
