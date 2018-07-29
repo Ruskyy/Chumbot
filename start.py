@@ -9,10 +9,12 @@ from discord.ext import commands
 from discord.ext.commands import Bot
 
 BOT_PREFIX = ("?","!")
-#Timestamp
+
+#Cria uma timestamp durante o boot para o sobre()
 ts = time.time()
 lastboot = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
+#Nao te esque'cas de adicionar o token ANA
 TOKEN = ''
 
 bot = Bot(command_prefix=BOT_PREFIX)
@@ -49,17 +51,6 @@ async def sobre():
     embed.add_field(name="Convite:", value="[Link](https://discordapp.com/api/oauth2/authorize/471498303431770122)")
     embed.set_footer(text="Chumbados")
     await bot.say(embed=embed)
-
-# @client.event
-# async def on_message(message):
-#     # Impede que o bott entre em loop de se responder a si mesmo
-#     if message.author == client.user:
-#         return
-#
-#     if message.content.startswith('!ola'):
-#         msg = 'Só fizeste uma mensagem de olá ? {0.author.mention} estás CHUMBADO'.format(message)
-#         await client.send_message(message.channel, msg)
-
 
 @bot.event
 async def on_message(message):
