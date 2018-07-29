@@ -13,7 +13,7 @@ BOT_PREFIX = ("?","!")
 ts = time.time()
 lastboot = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
-TOKEN = 'NDcxNDk4MzAzNDMxNzcwMTIy.Dj0Yuw.g6KumUnYWn-A7P-mREODg1Fd1OQ'
+TOKEN = ''
 
 bot = Bot(command_prefix=BOT_PREFIX)
 
