@@ -17,7 +17,7 @@ ts = time.time()
 lastboot = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
 #Nao te esque'cas de adicionar o token ANA
-TOKEN = 'NDcxNDk4MzAzNDMxNzcwMTIy.Dj6qVg.JHoP-UQOBperAOnuRO0XT4dCUnU'
+TOKEN = ''
 
 bot = commands.Bot(command_prefix=BOT_PREFIX)
 
