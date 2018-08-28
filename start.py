@@ -5,8 +5,10 @@ import json
 import time
 import datetime
 import discord
+import youtube_dl
 from discord.ext import commands
 from discord.ext.commands import Bot
+from discord.voice_client import VoiceClient
 
 BOT_PREFIX = ("?","!")
 
@@ -15,9 +17,11 @@ ts = time.time()
 lastboot = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
 #Nao te esque'cas de adicionar o token ANA
-TOKEN = ''
+TOKEN = 'NDcxNDk4MzAzNDMxNzcwMTIy.Dj6qVg.JHoP-UQOBperAOnuRO0XT4dCUnU'
 
-bot = Bot(command_prefix=BOT_PREFIX)
+bot = commands.Bot(command_prefix=BOT_PREFIX)
+
+players={}
 
 @bot.command()
 async def pergunta():
@@ -52,16 +56,38 @@ async def sobre():
     embed.set_footer(text="Chumbados")
     await bot.say(embed=embed)
 
+
+@bot.command(pass_context=True)
+async def entra(ctx):
+    print("Entra")
+    channel=ctx.message.author.voice.voice_channel
+    await bot.join_voice_channel(channel)
+
+
+@bot.command(pass_context=True)
+async def sai(ctx):
+    print("Sai")
+    server=ctx.message.server
+    voice_client = bot.voice_client_in(server)
+    await voice_client.disconnect()
+
+@bot.command(pass_context=True)
+async def play(ctx,url):
+    print("Playing")
+    server=ctx.message.server
+    voice_client = bot.voice_client_in(server)
+    player = await voice_client.create_ytdl_player(url)
+    players[server.id] = player
+    player.start()
+
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
-
     if 'chumbado' in message.content.lower():
         msg = 'Zero Bola C-H-U-M-B-A-D-O'.format(message)
         print(msg)
         await bot.send_message(message.channel,msg)
-
     await bot.process_commands(message)
 
 # Comandos on boot
