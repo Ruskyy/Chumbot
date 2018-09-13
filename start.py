@@ -88,7 +88,34 @@ async def on_message(message):
         msg = 'Zero Bola C-H-U-M-B-A-D-O'.format(message)
         print(msg)
         await bot.send_message(message.channel,msg)
+        await asyncio.sleep(2) # espera 2 segundos para enviar a proxima mensagem
+        await bot.add_reaction(message,"👍")
     await bot.process_commands(message)
+
+
+# quando for colocado um emoji, o bot reage á mensagem que postou o emoticon
+# MENSAGEM TEMPORARIA
+@bot.event
+async def on_reaction_add(reaction,user,message):
+    if message.author == bot.user:
+        return
+    channel = reaction.message.channel
+    react_animated = get(bot.get_all_emojis(), reaction.emoji)
+    await bot.send_message(channel, '{} acabou de colocar {} '.format(user.name, react_animated))
+
+# quando alguem se junta ao servidor
+@bot.event
+async def on_member_join(member):
+    channel = bot.get_channel("471499727184199683")
+    msg = "{} juntou-se á lista de espera para comprar o kit da stapples".format(member.mention)
+    await bot.send_message(channel, msg)
+
+# quando alguem sai
+@bot.event
+async def on_member_remove(member):
+    channel = bot.get_channel("471499727184199683")
+    msg = "{} desistiu.".format(member.mention)
+    await bot.send_message(channel, msg)
 
 # Comandos on boot
 @bot.event
