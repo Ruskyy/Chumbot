@@ -17,11 +17,21 @@ ts = time.time()
 lastboot = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
 #Nao te esque'cas de adicionar o token ANA
-TOKEN = ''
+TOKEN = 'NDcxNDk4MzAzNDMxNzcwMTIy.Dj6qVg.JHoP-UQOBperAOnuRO0XT4dCUnU'
 
 bot = commands.Bot(command_prefix=BOT_PREFIX)
 
 players={}
+queues={}
+
+
+
+def check_song(id):
+    if queues[id] != []:
+        player = queues[id].pop(0)
+        players[id] = player
+        player.start()
+
 
 @bot.command()
 async def pergunta():
@@ -48,7 +58,7 @@ async def bitcoin():
 @bot.command()
 async def sobre():
     print("Sobre")
-    embed = discord.Embed(title="Chumbot", description="Basicamente o dario no corpo de um bot", color=0x3498db, type="rich")
+    embed = discord.Embed(title="Chumbot", description="Basicamente o dario no corpo de um bot.", color=0x3498db, type="rich")
     embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/471500310133604352/471500693539258386/qw.png")
     embed.add_field(name="Autores", value="Rusky#0001 and AnaG#2174")
     embed.add_field(name="Online desde:", value=lastboot);
@@ -56,12 +66,12 @@ async def sobre():
     embed.set_footer(text="Chumbados")
     await bot.say(embed=embed)
 
-
-@bot.command(pass_context=True)
-async def entra(ctx):
-    print("Entra")
-    channel=ctx.message.author.voice.voice_channel
-    await bot.join_voice_channel(channel)
+# Comando de join
+#@bot.command(pass_context=True)
+#async def entra(ctx):
+#    print("Entra")
+#    channel=ctx.message.author.voice.voice_channel
+#    await bot.join_voice_channel(channel)
 
 
 @bot.command(pass_context=True)
@@ -71,14 +81,62 @@ async def sai(ctx):
     voice_client = bot.voice_client_in(server)
     await voice_client.disconnect()
 
+
+# Da join e play
 @bot.command(pass_context=True)
 async def play(ctx,url):
-    print("Playing")
+    #Join
+    request_user_channel=ctx.message.author.voice.voice_channel
+    server=ctx.message.server
+    voice_client = bot.voice_client_in(server)
+    if request_user_channel is None:
+        print("user nao estava em voice")
+        await bot.say('Puto... para fazer isso tens de estar num voice chat chavalo...')
+        return False
+    if voice_client is None:
+        await bot.join_voice_channel(request_user_channel)
+        voice_client = bot.voice_client_in(server)
+        print("Joined and started Playing")
+
+    player = await voice_client.create_ytdl_player(url, after= lambda: check_song(server.id))
+    players[server.id] = player
+    player.start()
+
+
+@bot.command(pass_context=True)
+async def pause(ctx):
+    #Join
+    id=ctx.message.server.id
+    players[id].pause()
+    print("Pause")
+
+@bot.command(pass_context=True)
+async def stop(ctx):
+    #Join
+    id=ctx.message.server.id
+    players[id].stop()
+    print("Stop")
+
+@bot.command(pass_context=True)
+async def resume(ctx):
+    #Join
+    id=ctx.message.server.id
+    players[id].resume()
+    print("Resume")
+
+@bot.command(pass_context=True)
+async def queue(ctx,url):
+    #Join
     server=ctx.message.server
     voice_client = bot.voice_client_in(server)
     player = await voice_client.create_ytdl_player(url)
-    players[server.id] = player
-    player.start()
+
+    if server.id is queues:
+        queues[server.id].append(player)
+    else:
+        queues[server.id] = [player]
+
+
 
 @bot.event
 async def on_message(message):
