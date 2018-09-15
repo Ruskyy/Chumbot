@@ -2,6 +2,7 @@ import random
 import os
 import aiohttp
 import json
+import asyncio
 import time
 import datetime
 import discord
@@ -9,8 +10,6 @@ import youtube_dl
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.voice_client import VoiceClient
-import asyncio
-import time
 
 BOT_PREFIX = ("?","!")
 
@@ -287,17 +286,62 @@ async def on_message(message):
         await bot.send_message(message.channel,msg)
         await asyncio.sleep(2) # espera 2 segundos para enviar a proxima mensagem
         await bot.add_reaction(message,"👍")
+    if message.content == "!role":
+        embid = discord.Embed(
+            title = 'Futuro depois da atec:',
+            colour = 808080,
+            description=" - McDonalds = 🍔‍\n‍\n"
+                        " - Agricultor = 🥕\n‍\n"
+                        " - Perito em codigo = 👳‍\n"
+        )
+    mebotmsg = await bot.send_message(message.channel, embed=embid)
+    await bot.add_reaction(mebotmsg, "🍔")
+    await bot.add_reaction(mebotmsg, "🥕")
+    await bot.add_reaction(mebotmsg, "👳")
+
+    global mesagee_id
+    mesagee_id = mebotmsg.id
+    global msg_user
+    msg_user = message.author
+
+    await bot.process_commands(message)
     await bot.process_commands(message)
 
 
 # quando for colocado um emoji, o bot reage á mensagem que postou o emoticon
 # MENSAGEM TEMPORARIA
 @bot.event
-async def on_reaction_add(reaction,user,message):
-    if message.author == bot.user:
-        return
+async def on_reaction_add(reaction,user):
     channel = reaction.message.channel
-    await bot.send_message(channel, '{} acabou de colocar {} '.format(user.name, reaction.emoji))
+    r_mnsg = reaction.message
+    if user == bot.user:
+        return
+    if reaction.emoji == "🍔" and mesagee_id==r_mnsg.id:
+        role = discord.utils.find(lambda r: r.name == "empregado do McDonalds", r_mnsg.server.roles)
+        await bot.add_roles(user,role)
+    if reaction.emoji == "🥕" and mesagee_id==r_mnsg.id:
+        role = discord.utils.find(lambda r: r.name == "Agricultor XPTO", r_mnsg.server.roles)
+        await bot.add_roles(user,role)
+    if reaction.emoji == "👳" and mesagee_id==r_mnsg.id:
+        role = discord.utils.find(lambda r: r.name == "indiano senpai", r_mnsg.server.roles)
+        await bot.add_roles(user,role)
+
+    if user != bot.user and reaction.emoji != "🍔" and reaction.emoji != "🥕" and reaction.emoji != "👳":
+        await bot.send_message(channel, '{} colocar {} é bué gay'.format(user.name, reaction.emoji))
+
+
+@bot.event
+async def on_reaction_remove(reaction,user):
+    r_mnsg = reaction.message
+    if reaction.emoji == "🍔" and mesagee_id==r_mnsg.id:
+        role = discord.utils.find(lambda r: r.name == "empregado do McDonalds", r_mnsg.server.roles)
+        await bot.remove_roles(user,role)
+    if reaction.emoji == "🥕" and mesagee_id==r_mnsg.id:
+        role = discord.utils.find(lambda r: r.name == "Agricultor XPTO", r_mnsg.server.roles)
+        await bot.remove_roles(user,role)
+    if reaction.emoji == "👳" and mesagee_id==r_mnsg.id:
+        role = discord.utils.find(lambda r: r.name == "indiano senpai", r_mnsg.server.roles)
+        await bot.remove_roles(user,role)
 
 # quando alguem se junta ao servidor
 @bot.event
