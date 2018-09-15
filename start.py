@@ -6,10 +6,11 @@ import time
 import datetime
 import discord
 import youtube_dl
-import asyncio
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.voice_client import VoiceClient
+import asyncio
+import time
 
 BOT_PREFIX = ("?","!")
 
@@ -18,7 +19,7 @@ ts = time.time()
 lastboot = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
 #Nao te esque'cas de adicionar o token ANA
-TOKEN = 'NDcxNDk4MzAzNDMxNzcwMTIy.Dj6qVg.JHoP-UQOBperAOnuRO0XT4dCUnU'
+TOKEN = ''
 
 bot = commands.Bot(command_prefix=BOT_PREFIX)
 
@@ -296,8 +297,7 @@ async def on_reaction_add(reaction,user,message):
     if message.author == bot.user:
         return
     channel = reaction.message.channel
-    react_animated = get(bot.get_all_emojis(), reaction.emoji)
-    await bot.send_message(channel, '{} acabou de colocar {} '.format(user.name, react_animated))
+    await bot.send_message(channel, '{} acabou de colocar {} '.format(user.name, reaction.emoji))
 
 # quando alguem se junta ao servidor
 @bot.event
