@@ -342,11 +342,13 @@ async def on_message(message):
             colour = 808080,
             description=" - McDonalds = 🍔‍\n‍\n"
                         " - Agricultor = 🥕\n‍\n"
+                        "- Telepizza = 🍕 \n\n"
                         " - Perito em codigo = 👳‍\n"
         )
         mebotmsg = await bot.send_message(message.channel, embed=embid)
         await bot.add_reaction(mebotmsg, "🍔")
         await bot.add_reaction(mebotmsg, "🥕")
+        await bot.add_reaction(mebotmsg, "🍕")
         await bot.add_reaction(mebotmsg, "👳")
 
         mesagee_id = mebotmsg.id
@@ -382,7 +384,6 @@ async def on_reaction_add(reaction,user):
     on_role = "off"
     game_status="off"
 
-
     if user == bot.user:
         return
 
@@ -394,28 +395,28 @@ async def on_reaction_add(reaction,user):
         on_role = "on"
         role = discord.utils.find(lambda r: r.name == "Agricultor XPTO", r_mnsg.server.roles)
         await bot.add_roles(user,role)
+
     if reaction.emoji == "👳" and mesagee_id==r_mnsg.id:
         on_role = "on"
         role = discord.utils.find(lambda r: r.name == "indiano senpai", r_mnsg.server.roles)
         await bot.add_roles(user,role)
 
-    if played == 1 :
-        played = 0
-        if reaction.emoji == "✊" and chosen == "Tesoura" or reaction.emoji=="🖐" and chosen == "Pedra" or reaction.emoji == "🖖" and chosen == "Papel":
-            game_status="on"
-            await bot.send_message(channel, "Ganhas-te")
+    if reaction.emoji == "🍕" and mesagee_id==r_mnsg.id:
+        on_role = "on"
+        role = discord.utils.find(lambda r: r.name == "O Escolhido da Telepizza", r_mnsg.server.roles)
+        await bot.add_roles(user,role)
 
-        if reaction.emoji == "✊" and chosen == "Papel" or reaction.emoji=="🖐" and chosen == "Tesoura" or reaction.emoji == "🖖" and chosen == "Pedra":
-            game_status="on"
-            await bot.send_message(channel,'Perdes-te')
+    if reaction.emoji == "✊" and chosen == "Tesoura" or reaction.emoji=="🖐" and chosen == "Pedra" or reaction.emoji == "🖖" and chosen == "Papel":
+        game_status="on"
+        await bot.send_message(channel, "Ganhas-te")
 
-        if reaction.emoji == "✊" and chosen == "Pedra" or reaction.emoji=="🖐" and chosen == "Papel" or reaction.emoji == "🖖" and chosen == "Tesoura":
-            game_status="on"
-            await bot.send_message(channel,'Empate')
+    if reaction.emoji == "✊" and chosen == "Papel" or reaction.emoji=="🖐" and chosen == "Tesoura" or reaction.emoji == "🖖" and chosen == "Pedra":
+        game_status="on"
+        await bot.send_message(channel,'Perdes-te')
 
-    if user != bot.user and game_status!="on" and on_role!="on":
-        await bot.send_message(channel, '{} colocar {} é bué gay'.format(user.name, reaction.emoji))
-
+    if reaction.emoji == "✊" and chosen == "Pedra" or reaction.emoji=="🖐" and chosen == "Papel" or reaction.emoji == "🖖" and chosen == "Tesoura":
+        game_status="on"
+        await bot.send_message(channel,'Empate')
 
 
 @bot.event
@@ -429,6 +430,9 @@ async def on_reaction_remove(reaction,user):
         await bot.remove_roles(user,role)
     if reaction.emoji == "👳" and mesagee_id==r_mnsg.id:
         role = discord.utils.find(lambda r: r.name == "indiano senpai", r_mnsg.server.roles)
+        await bot.remove_roles(user,role)
+    if reaction.emoji == "🍕" and mesagee_id==r_mnsg.id:
+        role = discord.utils.find(lambda r: r.name == "O Escolhido da Telepizza", r_mnsg.server.roles)
         await bot.remove_roles(user,role)
 
 # quando alguem se junta ao servidor procura o channel com o nome 'general' e envia a mensagem
