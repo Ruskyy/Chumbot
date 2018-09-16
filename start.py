@@ -417,6 +417,10 @@ async def on_reaction_add(reaction,user):
     if reaction.emoji == "✊" and chosen == "Pedra" or reaction.emoji=="🖐" and chosen == "Papel" or reaction.emoji == "🖖" and chosen == "Tesoura":
         game_status="on"
         await bot.send_message(channel,'Empate')
+        
+    if user != bot.user and game_status!="on" and on_role!="on":
+        await bot.send_message(channel, '{} colocar {} é bué gay'.format(user.name, reaction.emoji))
+
 
 
 @bot.event
