@@ -10,6 +10,7 @@ import discord
 import youtube_dl
 import safygiphy
 import requests
+from whoplays import whoplays
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.voice_client import VoiceClient
@@ -199,6 +200,7 @@ class Music:
 
         server = ctx.message.server
         state = self.get_voice_state(server)
+        user_requested= ctx.message.author.mention
 
         if state.is_playing():
             player = state.player
@@ -209,7 +211,7 @@ class Music:
             del self.voice_states[server.id]
             await state.voice.disconnect()
             await self.bot.say("Pronto acabou maltinha ... xau")
-            await self.bot.say("Bernardo arranjas-me um cigarrinho ?")
+            await self.bot.say('{} arranjas-me um cigarrinho ?'.format(user_requested))
         except:
             pass
 
@@ -253,23 +255,24 @@ async def comandos():
     message = discord.Embed(
         title = 'Lista de comandos:',
         colour = 0x3498db,
-        description=" \n !sobre         informacoes sobre o bot \n‍\n"
-                    " !comandos         apresenta lista de todos os comandos \n‍\n"
-                    " !pergunta         basicamente uma 8-Ball \n‍\n"
-                    " !bitcoin          apresenta o valor das bitcoin em EUR\n‍\n"
-                    " !escolhe [list]   escolhe uma das opcoes \n‍\n"
-                    " !gif [search]     procura e seleciona ao acaso um gif \n‍\n"
-                    " !pedra            pedra/papel/tesoura \n‍\n"
-                    " !role             aplica roles a users \n‍\n"
+        description=" \n !sobre          informacoes sobre o bot \n‍\n"
+                    " !comandos          apresenta lista de todos os comandos \n‍\n"
+                    " !pergunta          basicamente uma 8-Ball \n‍\n"
+                    " !bitcoin           apresenta o valor das bitcoin em EUR\n‍\n"
+                    " !escolhe [list]    escolhe uma das opcoes \n‍\n"
+                    " !gif [search]      procura e seleciona ao acaso um gif \n‍\n"
+                    " !pedra             pedra/papel/tesoura \n‍\n"
+                    " !role              aplica roles a users \n‍\n"
                     "\n\n"
-                    " !play [arg]       Inicia a reproducao de um link/pesquisa \n‍\n"
-                    " !volume           permite alterar o volume do bot \n‍\n"
-                    " !playing          identifica a musica actual \n‍\n"
-                    " !skip             votacao para passar 'a frente' \n‍\n"
-                    " !pause            pausa a musica actual \n‍\n"
-                    " !resume           retoma a musica actual \n‍\n"
-                    " !stop             informacoes sobre o bot \n‍\n"
-                    " !pause            informacoes sobre o bot \n‍\n"
+                    " !play [arg]        Inicia a reproducao de um link/pesquisa \n‍\n"
+                    " !volume            permite alterar o volume do bot \n‍\n"
+                    " !playing           identifica a musica actual \n‍\n"
+                    " !skip              votacao para passar 'a frente' \n‍\n"
+                    " !pause             pausa a musica actual \n‍\n"
+                    " !resume            retoma a musica actual \n‍\n"
+                    " \n‍\n"
+                    " !topgames          mostra os jogos mais jogados \n‍\n"
+                    " !quemjoga [search] mostra quem joga o que \n‍\n"
     )
     await bot.say(embed=message)
 
@@ -339,10 +342,10 @@ async def on_message(message):
     if message.content == "!role":
         embid = discord.Embed(
             title = 'Futuro depois da atec:',
-            colour = 808080,
+            colour = 0x3498db,
             description=" - McDonalds = 🍔‍\n‍\n"
                         " - Agricultor = 🥕\n‍\n"
-                        "- Telepizza = 🍕 \n\n"
+                        " - Telepizza = 🍕 \n\n"
                         " - Perito em codigo = 👳‍\n"
         )
         mebotmsg = await bot.send_message(message.channel, embed=embid)
@@ -464,5 +467,6 @@ async def on_ready():
     print('----------------------------')
     await bot.change_presence(game=discord.Game(name="with code"))
 
+whoplays.setup(bot)
 bot.add_cog(Music(bot))
 bot.run(TOKEN)
