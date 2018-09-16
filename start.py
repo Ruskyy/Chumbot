@@ -1,5 +1,6 @@
 import random
 import os
+import io
 import aiohttp
 import json
 import asyncio
@@ -7,28 +8,29 @@ import time
 import datetime
 import discord
 import youtube_dl
+import safygiphy
+import requests
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.voice_client import VoiceClient
 
-BOT_PREFIX = ("?","!")
+BOT_PREFIX = ("!")
 
 #Cria uma timestamp durante o boot para o sobre()
 ts = time.time()
 lastboot = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
 #Nao te esquecas de adicionar o token ANA
-TOKEN = ''
+TOKEN = 'NDcxNDk4MzAzNDMxNzcwMTIy.Dj0Yuw.g6KumUnYWn-A7P-mREODg1Fd1OQ'
 
+#Incicaliza a framework do bot
 bot = commands.Bot(command_prefix=BOT_PREFIX)
+
+#Instancia a API do Giphy
+g = safygiphy.Giphy()
 
 
 if not discord.opus.is_loaded():
-    # the 'opus' library here is opus.dll on windows
-    # or libopus.so on linux in the current directory
-    # you should replace this with the location the
-    # opus library is located in and with the proper filename.
-    # note that on windows this DLL is automatically provided for you
     discord.opus.load_opus('opus')
 
 def __init__(self, bot):
@@ -113,7 +115,7 @@ class Music:
 
     @commands.command(pass_context=True, no_pm=True)
     async def summon(self, ctx):
-        #Summons the bot to join your voice channel.
+
         summoned_channel = ctx.message.author.voice_channel
         if summoned_channel is None:
             await self.bot.say('Puto... para fazer isso tens de estar num voice chat chavalo...')
@@ -129,12 +131,7 @@ class Music:
 
     @commands.command(pass_context=True, no_pm=True)
     async def play(self, ctx, *, song : str):
-        #Plays a song.
-        #If there is a song currently in the queue, then it is
-        #queued until the next song is done playing.
-        #This command automatically searches as well from YouTube.
-        #The list of supported sites can be found here:
-        #https://rg3.github.io/youtube-dl/supportedsites.html
+
         request_user_channel=ctx.message.author.voice.voice_channel
         server=ctx.message.server
 
@@ -171,13 +168,26 @@ class Music:
 
         state = self.get_voice_state(ctx.message.server)
         if state.is_playing():
-            print("Volume para : " + str(value))
+            if value >= 0 and value <= 300:
+                print("Volume para : " + str(value))
+                player = state.player
+                player.volume = value / 100
+                await self.bot.say('Volume a : {:.0%}'.format(player.volume))
+            else:
+                await self.bot.say('Deves achar que sou otario... (0-300)')
+                return
+        else:
+            await self.bot.say('Mas estas burro ou que ? Nao estou a passar musica')
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def pause(self, ctx):
+        state = self.get_voice_state(ctx.message.server)
+        if state.is_playing():
             player = state.player
-            player.volume = value / 100
-            await self.bot.say('Volume a : {:.0%}'.format(player.volume))
+            player.pause()
+
     @commands.command(pass_context=True, no_pm=True)
     async def resume(self, ctx):
-        #Resumes the currently played song.
         state = self.get_voice_state(ctx.message.server)
         if state.is_playing():
             player = state.player
@@ -230,13 +240,38 @@ class Music:
     @commands.command(pass_context=True, no_pm=True)
     async def playing(self, ctx):
         #Shows info about the currently played song.
-
         state = self.get_voice_state(ctx.message.server)
         if state.current is None:
             await self.bot.say('Mas estas burro ou que ? Nao estou a passar musica')
         else:
             skip_count = len(state.skip_votes)
             await self.bot.say('A bombar {} [skips: {}/3]'.format(state.current, skip_count))
+
+#Lista de comandos
+@bot.command()
+async def comandos():
+    message = discord.Embed(
+        title = 'Lista de comandos:',
+        colour = 0x3498db,
+        description=" \n !sobre         informacoes sobre o bot \n‍\n"
+                    " !comandos         apresenta lista de todos os comandos \n‍\n"
+                    " !pergunta         basicamente uma 8-Ball \n‍\n"
+                    " !bitcoin          apresenta o valor das bitcoin em EUR\n‍\n"
+                    " !escolhe [list]   escolhe uma das opcoes \n‍\n"
+                    " !gif [search]     procura e seleciona ao acaso um gif \n‍\n"
+                    " !pedra            pedra/papel/tesoura \n‍\n"
+                    " !role             aplica roles a users \n‍\n"
+                    "\n\n"
+                    " !play [arg]       Inicia a reproducao de um link/pesquisa \n‍\n"
+                    " !volume           permite alterar o volume do bot \n‍\n"
+                    " !playing          identifica a musica actual \n‍\n"
+                    " !skip             votacao para passar 'a frente' \n‍\n"
+                    " !pause            pausa a musica actual \n‍\n"
+                    " !resume           retoma a musica actual \n‍\n"
+                    " !stop             informacoes sobre o bot \n‍\n"
+                    " !pause            informacoes sobre o bot \n‍\n"
+    )
+    await bot.say(embed=message)
 
 @bot.command()
 async def pergunta():
@@ -251,7 +286,7 @@ async def pergunta():
         'Estas é com saudades das minhas musicas']
     await bot.say(random.choice(respostas))
 
-@bot.command(description='Escolhe uma opcao em varias')
+@bot.command()
 async def escolhe(*choices : str):
     await bot.say(random.choice(choices))
 
@@ -277,11 +312,21 @@ async def sobre():
     embed.set_footer(text="Chumbados")
     await bot.say(embed=embed)
 
+@bot.command(pass_context=True)
+async def gif(ctx,search):
+    msgserver=ctx.message.channel
+    gif_search = search
+    resultquerrygif = g.random(tag=str(gif_search))
+    resposta = requests.get(
+    str(resultquerrygif.get('data',{}).get('image_original_url')),stream=True
+    )
+    await bot.send_file(msgserver,io.BytesIO(resposta.raw.read()),filename='isto_e_um_jpeg.gif')
 
 @bot.event
 async def on_message(message):
     global mesagee_id
     global msg_user
+
 
     if message.author == bot.user:
         return
@@ -310,7 +355,7 @@ async def on_message(message):
     if message.content == "!pedra":
         embeed = discord.Embed(
             title = 'Escolhe:',
-            colour = 808080,
+            colour = 0x3498db,
             description=" - Pedra = ✊‍\n‍\n"
                         " - Papel = 🖐\n‍\n"
                         " - Tesoura = 🖖"
@@ -323,7 +368,8 @@ async def on_message(message):
         ppt = ["Pedra","Papel","Tesoura"]
         global chosen
         chosen = random.choice(ppt)
-
+        global played
+        played = 1
 
     await bot.process_commands(message)
 
@@ -335,8 +381,11 @@ async def on_reaction_add(reaction,user):
     r_mnsg = reaction.message
     on_role = "off"
     game_status="off"
+
+
     if user == bot.user:
         return
+
     if reaction.emoji == "🍔" and mesagee_id==r_mnsg.id:
         on_role = "on"
         role = discord.utils.find(lambda r: r.name == "empregado do McDonalds", r_mnsg.server.roles)
@@ -350,20 +399,23 @@ async def on_reaction_add(reaction,user):
         role = discord.utils.find(lambda r: r.name == "indiano senpai", r_mnsg.server.roles)
         await bot.add_roles(user,role)
 
-    if reaction.emoji == "✊" and chosen == "Tesoura" or reaction.emoji=="🖐" and chosen == "Pedra" or reaction.emoji == "🖖" and chosen == "Papel":
-        game_status="on"
-        await bot.send_message(channel, "Ganhas-te")
+    if played == 1 :
+        played = 0
+        if reaction.emoji == "✊" and chosen == "Tesoura" or reaction.emoji=="🖐" and chosen == "Pedra" or reaction.emoji == "🖖" and chosen == "Papel":
+            game_status="on"
+            await bot.send_message(channel, "Ganhas-te")
 
-    if reaction.emoji == "✊" and chosen == "Papel" or reaction.emoji=="🖐" and chosen == "Tesoura" or reaction.emoji == "🖖" and chosen == "Pedra":
-        game_status="on"
-        await bot.send_message(channel,'Perdes-te')
+        if reaction.emoji == "✊" and chosen == "Papel" or reaction.emoji=="🖐" and chosen == "Tesoura" or reaction.emoji == "🖖" and chosen == "Pedra":
+            game_status="on"
+            await bot.send_message(channel,'Perdes-te')
 
-    if reaction.emoji == "✊" and chosen == "Pedra" or reaction.emoji=="🖐" and chosen == "Papel" or reaction.emoji == "🖖" and chosen == "Tesoura":
-        game_status="on"
-        await bot.send_message(channel,'Empate')
+        if reaction.emoji == "✊" and chosen == "Pedra" or reaction.emoji=="🖐" and chosen == "Papel" or reaction.emoji == "🖖" and chosen == "Tesoura":
+            game_status="on"
+            await bot.send_message(channel,'Empate')
 
     if user != bot.user and game_status!="on" and on_role!="on":
         await bot.send_message(channel, '{} colocar {} é bué gay'.format(user.name, reaction.emoji))
+
 
 
 @bot.event
@@ -379,19 +431,21 @@ async def on_reaction_remove(reaction,user):
         role = discord.utils.find(lambda r: r.name == "indiano senpai", r_mnsg.server.roles)
         await bot.remove_roles(user,role)
 
-# quando alguem se junta ao servidor
+# quando alguem se junta ao servidor procura o channel com o nome 'general' e envia a mensagem
 @bot.event
 async def on_member_join(member):
-    channel = bot.get_channel("471499727184199683")
-    msg = "{} juntou-se á lista de espera para comprar o kit da staples".format(member.mention)
-    await bot.send_message(channel, msg)
+    for channel in member.server.channels:
+        if channel.name == 'general':
+            msg = "{} juntou-se á lista de espera para comprar o kit da staples".format(member.mention)
+            await bot.send_message(channel, msg)
 
-# quando alguem sai
+# quando alguem sai procura o channel com o nome 'general' e envia a mensagem
 @bot.event
 async def on_member_remove(member):
-    channel = bot.get_channel("471499727184199683")
-    msg = "{} desistiu.".format(member.mention)
-    await bot.send_message(channel, msg)
+    for channel in member.server.channels:
+        if channel.name == 'general':
+            msg = "{} desistiu.".format(member.mention)
+            await bot.send_message(channel, msg)
 
 # Comandos on boot
 @bot.event
