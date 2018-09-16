@@ -278,6 +278,9 @@ async def sobre():
 
 @bot.event
 async def on_message(message):
+    global mesagee_id
+    global msg_user
+
     if message.author == bot.user:
         return
     if 'chumbado' in message.content.lower():
@@ -294,17 +297,32 @@ async def on_message(message):
                         " - Agricultor = 🥕\n‍\n"
                         " - Perito em codigo = 👳‍\n"
         )
-    mebotmsg = await bot.send_message(message.channel, embed=embid)
-    await bot.add_reaction(mebotmsg, "🍔")
-    await bot.add_reaction(mebotmsg, "🥕")
-    await bot.add_reaction(mebotmsg, "👳")
+        mebotmsg = await bot.send_message(message.channel, embed=embid)
+        await bot.add_reaction(mebotmsg, "🍔")
+        await bot.add_reaction(mebotmsg, "🥕")
+        await bot.add_reaction(mebotmsg, "👳")
 
-    global mesagee_id
-    mesagee_id = mebotmsg.id
-    global msg_user
-    msg_user = message.author
+        mesagee_id = mebotmsg.id
+        msg_user = message.author
 
-    await bot.process_commands(message)
+    if message.content == "Pedra":
+        embeed = discord.Embed(
+            title = 'Escolhe:',
+            colour = 808080,
+            description=" - Pedra = ✊‍\n‍\n"
+                        " - Papel = 🖐\n‍\n"
+                        " - Tesoura =  ✌"
+        )
+        botppt = await bot.send_message(message.channel, embed=embeed)
+        await bot.add_reaction(botppt, "✊")
+        await bot.add_reaction(botppt, "🖐")
+        await bot.add_reaction(botppt, "✌")
+
+        ppt = ["Pedra","Papel","Tesoura"]
+        global chosen
+        chosen = random.choice(ppt)
+
+
     await bot.process_commands(message)
 
 
