@@ -17,7 +17,7 @@ BOT_PREFIX = ("?","!")
 ts = time.time()
 lastboot = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
-#Nao te esque'cas de adicionar o token ANA
+#Nao te esquecas de adicionar o token ANA
 TOKEN = ''
 
 bot = commands.Bot(command_prefix=BOT_PREFIX)
@@ -246,7 +246,9 @@ async def pergunta():
         'Pergunta ao Indiano',
         'Isso e bueda facil',
         'Ja estas chumbado',
-        'Gajas... yah.. Gajas... Hmm.. qual era a pergunta mesmo ?']
+        'Gajas... yah.. Gajas... Hmm.. qual era a pergunta mesmo ?',
+        'Ja chumbaste o modulo',
+        'Estas é com saudades das minhas musicas']
     await bot.say(random.choice(respostas))
 
 @bot.command(description='Escolhe uma opcao em varias')
@@ -305,18 +307,18 @@ async def on_message(message):
         mesagee_id = mebotmsg.id
         msg_user = message.author
 
-    if message.content == "Pedra":
+    if message.content == "!pedra":
         embeed = discord.Embed(
             title = 'Escolhe:',
             colour = 808080,
             description=" - Pedra = ✊‍\n‍\n"
                         " - Papel = 🖐\n‍\n"
-                        " - Tesoura =  ✌"
+                        " - Tesoura = 🖖"
         )
         botppt = await bot.send_message(message.channel, embed=embeed)
         await bot.add_reaction(botppt, "✊")
         await bot.add_reaction(botppt, "🖐")
-        await bot.add_reaction(botppt, "✌")
+        await bot.add_reaction(botppt, "🖖")
 
         ppt = ["Pedra","Papel","Tesoura"]
         global chosen
@@ -327,24 +329,40 @@ async def on_message(message):
 
 
 # quando for colocado um emoji, o bot reage á mensagem que postou o emoticon
-# MENSAGEM TEMPORARIA
 @bot.event
 async def on_reaction_add(reaction,user):
     channel = reaction.message.channel
     r_mnsg = reaction.message
+    on_role = "off"
+    game_status="off"
     if user == bot.user:
         return
     if reaction.emoji == "🍔" and mesagee_id==r_mnsg.id:
+        on_role = "on"
         role = discord.utils.find(lambda r: r.name == "empregado do McDonalds", r_mnsg.server.roles)
         await bot.add_roles(user,role)
     if reaction.emoji == "🥕" and mesagee_id==r_mnsg.id:
+        on_role = "on"
         role = discord.utils.find(lambda r: r.name == "Agricultor XPTO", r_mnsg.server.roles)
         await bot.add_roles(user,role)
     if reaction.emoji == "👳" and mesagee_id==r_mnsg.id:
+        on_role = "on"
         role = discord.utils.find(lambda r: r.name == "indiano senpai", r_mnsg.server.roles)
         await bot.add_roles(user,role)
 
-    if user != bot.user and reaction.emoji != "🍔" and reaction.emoji != "🥕" and reaction.emoji != "👳":
+    if reaction.emoji == "✊" and chosen == "Tesoura" or reaction.emoji=="🖐" and chosen == "Pedra" or reaction.emoji == "🖖" and chosen == "Papel":
+        game_status="on"
+        await bot.send_message(channel, "Ganhas-te")
+
+    if reaction.emoji == "✊" and chosen == "Papel" or reaction.emoji=="🖐" and chosen == "Tesoura" or reaction.emoji == "🖖" and chosen == "Pedra":
+        game_status="on"
+        await bot.send_message(channel,'Perdes-te')
+
+    if reaction.emoji == "✊" and chosen == "Pedra" or reaction.emoji=="🖐" and chosen == "Papel" or reaction.emoji == "🖖" and chosen == "Tesoura":
+        game_status="on"
+        await bot.send_message(channel,'Empate')
+
+    if user != bot.user and game_status!="on" and on_role!="on":
         await bot.send_message(channel, '{} colocar {} é bué gay'.format(user.name, reaction.emoji))
 
 
