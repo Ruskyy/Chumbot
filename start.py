@@ -248,7 +248,7 @@ class Music:
 
     @commands.command(pass_context=True, no_pm=True)
     async def playing(self, ctx):
-        #Shows info about the currently played song.
+        
         state = self.get_voice_state(ctx.message.server)
         if state.current is None:
             await self.bot.say('Mas estas burro ou que ? Nao estou a passar musica')
