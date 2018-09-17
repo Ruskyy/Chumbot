@@ -10,10 +10,19 @@ import discord
 import youtube_dl
 import safygiphy
 import requests
+import hashlib
+#import cat
+
+
 from whoplays import whoplays
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.voice_client import VoiceClient
+from utils.tools import *
+from utils.unicode import *
+from utils.fun.lists import *
+from utils.fun.fortunes import fortunes
+#from PIL import Image
 
 BOT_PREFIX = ("!")
 
@@ -252,6 +261,7 @@ class Music:
 #Lista de comandos
 @bot.command()
 async def comandos():
+    print("Lista de Comandos")
     message = discord.Embed(
         title = 'Lista de comandos:',
         colour = 0x3498db,
@@ -273,6 +283,13 @@ async def comandos():
                     " \n‍\n"
                     " !topgames          mostra os jogos mais jogados \n‍\n"
                     " !quemjoga [search] mostra quem joga o que \n‍\n"
+                    " \n‍\n"
+                    " !reverse [str]     reverte a mensagem \n‍\n"
+                    " !spam              partilha spam no chat  \n‍\n"
+                    " !spellout [str]    L E T R A  A  L E T R A  \n‍\n"
+                    " !convmorse [str]   converte para morse  \n‍\n"
+                    " !tradmorse [str]   traduz de morse  \n‍\n"
+                    " !regrasdainternet  lista das regras da internet \n‍\n"
     )
     await bot.say(embed=message)
 
@@ -291,6 +308,7 @@ async def pergunta():
 
 @bot.command()
 async def escolhe(*choices : str):
+    print("Escolhas")
     await bot.say(random.choice(choices))
 
 @bot.command()
@@ -315,8 +333,10 @@ async def sobre():
     embed.set_footer(text="Chumbados")
     await bot.say(embed=embed)
 
+
 @bot.command(pass_context=True)
 async def gif(ctx,search):
+    print("Random Gif")
     msgserver=ctx.message.channel
     gif_search = search
     resultquerrygif = g.random(tag=str(gif_search))
@@ -324,6 +344,55 @@ async def gif(ctx,search):
     str(resultquerrygif.get('data',{}).get('image_original_url')),stream=True
     )
     await bot.send_file(msgserver,io.BytesIO(resposta.raw.read()),filename='isto_e_um_jpeg.gif')
+
+@bot.command(pass_context=True)
+async def spam(ctx):
+    print("Spam")
+    await bot.send_file(ctx.message.channel, r"assets/imgs/spam.png",filename="spam.png",content="SPAM!SPAM!SPAM!SPAM!")
+
+@bot.command(pass_context=True)
+async def reverse(ctx, msg:str):
+    print("Contrario")
+    await bot.send_message(ctx.message.channel,msg[::-1])
+
+#tem bug so funciona uma palavra
+@bot.command(pass_context=True)
+async def intelectual(ctx, palavra:str):
+    print("InTeLeCtUaL")
+    intellectify = ""
+    for char in palavra:
+        intellectify += random.choice([char.upper(), char.lower()])
+    await bot.send_message(ctx.message.channel,intellectify)
+
+@bot.command(pass_context=True)
+async def convmorse(ctx, msg:str):
+    print("Converter para Morse")
+    mensagem_codificada = ""
+    for char in list(msg.upper()):
+        mensagem_codificada += encode_morse[char] + " "
+    await bot.send_message(ctx.message.channel,mensagem_codificada)
+
+#tem bug so funciona uma letra
+@bot.command(pass_context=True)
+async def tradmorse(ctx, msg:str):
+    print("Traduzir morse")
+    mensagem_traduzida = ""
+    for char in msg.split():
+        if char is None:
+            continue
+        mensagem_traduzida += decode_morse[char]
+    await bot.send_message(ctx.message.channel,mensagem_traduzida)
+
+@bot.command(pass_context=True)
+async def regrasdainternet(ctx):
+    print("Regras da Internet")
+    await bot.send_file(ctx.message.channel,r"assets/InternetRules.txt",filename="InternetRules.txt")
+
+@bot.command(pass_context=True)
+async def spellout(ctx,msg:str):
+    spelloutmsg=' '.join(list(msg.upper()))
+    print("S P E L L O U T")
+    await bot.send_message(ctx.message.channel,spelloutmsg)
 
 @bot.event
 async def on_message(message):
@@ -340,6 +409,7 @@ async def on_message(message):
         await asyncio.sleep(2) # espera 2 segundos para enviar a proxima mensagem
         await bot.add_reaction(message,"👍")
     if message.content == "!role":
+        print("Role")
         embid = discord.Embed(
             title = 'Futuro depois da atec:',
             colour = 0x3498db,
@@ -358,6 +428,7 @@ async def on_message(message):
         msg_user = message.author
 
     if message.content == "!pedra":
+        print("Pedra")
         embeed = discord.Embed(
             title = 'Escolhe:',
             colour = 0x3498db,
@@ -420,7 +491,7 @@ async def on_reaction_add(reaction,user):
     if reaction.emoji == "✊" and chosen == "Pedra" or reaction.emoji=="🖐" and chosen == "Papel" or reaction.emoji == "🖖" and chosen == "Tesoura":
         game_status="on"
         await bot.send_message(channel,'Empate')
-        
+
     if user != bot.user and game_status!="on" and on_role!="on":
         await bot.send_message(channel, '{} colocar {} é bué gay'.format(user.name, reaction.emoji))
 
@@ -445,6 +516,7 @@ async def on_reaction_remove(reaction,user):
 # quando alguem se junta ao servidor procura o channel com o nome 'general' e envia a mensagem
 @bot.event
 async def on_member_join(member):
+    print("ALGUEM ENTROU NO SERVER")
     for channel in member.server.channels:
         if channel.name == 'general':
             msg = "{} juntou-se á lista de espera para comprar o kit da staples".format(member.mention)
@@ -453,6 +525,7 @@ async def on_member_join(member):
 # quando alguem sai procura o channel com o nome 'general' e envia a mensagem
 @bot.event
 async def on_member_remove(member):
+    print("ALGUEM SAIU NO SERVER")
     for channel in member.server.channels:
         if channel.name == 'general':
             msg = "{} desistiu.".format(member.mention)

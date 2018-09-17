@@ -16,11 +16,7 @@ Este bot estará num servidor á parte numa sala, onde os jogadores se quiserem 
 
 #### Jogos:
 
-* Bingo
-
 * Pedra papel e tesoura
-
-* Quatro em linha
 
 * Jogo da galinha.
 
@@ -36,7 +32,34 @@ Este bot estará num servidor á parte numa sala, onde os jogadores se quiserem 
 
 * Bitcoin info
 
-* Pesquisa no google/youtube
 
+### Lista de comandos
+
+```
+                " !sobre          informacoes sobre o bot \n‍\n"
+                " !comandos          apresenta lista de todos os comandos \n‍\n"
+                " !pergunta          basicamente uma 8-Ball \n‍\n"
+                " !bitcoin           apresenta o valor das bitcoin em EUR\n‍\n"
+                " !escolhe [list]    escolhe uma das opcoes \n‍\n"
+                " !gif [search]      procura e seleciona ao acaso um gif \n‍\n"
+                " !pedra             pedra/papel/tesoura \n‍\n"
+                " !role              aplica roles a users \n‍\n"
+                "\n\n"
+                " !play [arg]        Inicia a reproducao de um link/pesquisa \n‍\n"
+                " !volume            permite alterar o volume do bot \n‍\n"
+                " !playing           identifica a musica actual \n‍\n"
+                " !skip              votacao para passar 'a frente' \n‍\n"
+                " !pause             pausa a musica actual \n‍\n"
+                " !resume            retoma a musica actual \n‍\n"
+                " \n‍\n"
+                " !topgames          mostra os jogos mais jogados \n‍\n"
+                " !quemjoga [search] mostra quem joga o que \n‍\n"
+                " \n‍\n"
+                " !reverse [str]     reverte a mensagem \n‍\n"
+                " !spam              partilha spam no chat  \n‍\n"
+                " !spellout [str]    L E T R A  A  L E T R A  \n‍\n"
+                " !convmorse [str]   converte para morse  \n‍\n"
+                " !tradmorse [str]   traduz de morse  \n‍\n"
+```
 
 ![](https://cdn.discordapp.com/attachments/471500310133604352/471500682105585695/Untitled-1.png)
