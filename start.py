@@ -11,8 +11,6 @@ import youtube_dl
 import safygiphy
 import requests
 import hashlib
-#import cat
-
 
 from whoplays import whoplays
 from discord.ext import commands
@@ -21,8 +19,8 @@ from discord.voice_client import VoiceClient
 from utils.tools import *
 from utils.unicode import *
 from utils.fun.lists import *
-from utils.fun.fortunes import fortunes
-#from PIL import Image
+from utils import imagetools
+from PIL import Image
 
 BOT_PREFIX = ("!")
 
@@ -287,9 +285,12 @@ async def comandos():
                     " !reverse [str]     reverte a mensagem \n‍\n"
                     " !spam              partilha spam no chat  \n‍\n"
                     " !spellout [str]    L E T R A  A  L E T R A  \n‍\n"
-                    " !convmorse [str]   converte para morse  \n‍\n"
-                    " !tradmorse [str]   traduz de morse  \n‍\n"
+                    " !morse [str]       converte para morse  \n‍\n"
+                    " !remorse [str]     traduz de morse  \n‍\n"
                     " !regrasdainternet  lista das regras da internet \n‍\n"
+                    "\n\n"
+                    "!trigger            TRIGGERED \n\n"
+                    "!pretoebranco       infelismente nao e o michael jackson \n\n"
     )
     await bot.say(embed=message)
 
@@ -357,15 +358,21 @@ async def reverse(ctx, msg:str):
 
 #tem bug so funciona uma palavra
 @bot.command(pass_context=True)
-async def intelectual(ctx, palavra:str):
+async def intelectual(ctx, *, message:str):
     print("InTeLeCtUaL")
+    #print(str(message))
+    i=0
     intellectify = ""
-    for char in palavra:
-        intellectify += random.choice([char.upper(), char.lower()])
+    for char in message:
+        i= i + 1
+        if(i % 2 == 0):
+            intellectify += char.upper()
+        else:
+            intellectify += char.lower()
     await bot.send_message(ctx.message.channel,intellectify)
 
 @bot.command(pass_context=True)
-async def convmorse(ctx, msg:str):
+async def morse(ctx, *,msg:str):
     print("Converter para Morse")
     mensagem_codificada = ""
     for char in list(msg.upper()):
@@ -374,7 +381,7 @@ async def convmorse(ctx, msg:str):
 
 #tem bug so funciona uma letra
 @bot.command(pass_context=True)
-async def tradmorse(ctx, msg:str):
+async def remorse(ctx, *,msg:str):
     print("Traduzir morse")
     mensagem_traduzida = ""
     for char in msg.split():
@@ -393,6 +400,33 @@ async def spellout(ctx,msg:str):
     spelloutmsg=' '.join(list(msg.upper()))
     print("S P E L L O U T")
     await bot.send_message(ctx.message.channel,spelloutmsg)
+
+#-------------------------------------------------------------------------------------------
+#Edi'cao de imagem
+@bot.command(pass_context=True)
+async def trigger(ctx, member:discord.Member=None):
+    print('triggered')
+    if member is None:
+        member = ctx.message.author
+    download_file(get_avatar(member, animate=False), "data/trigger.png")
+    avatar = Image.open("data/trigger.png")
+    triggered = imagetools.rescale(Image.open("assets/imgs/triggered.jpg"), avatar.size)
+    position = 0, avatar.getbbox()[3] - triggered.getbbox()[3]
+    avatar.paste(triggered, position)
+    avatar.save("data/trigger.png")
+    await bot.send_file(ctx.message.channel,r"data/trigger.png",filename="triggered.png")
+
+@bot.command(pass_context=True)
+async def pretoebranco(ctx, user:discord.Member=None):
+    print('Preto e Branco')
+    if user is None:
+        user = ctx.message.author
+    download_file(get_avatar(user, animate=False), "data/blackandwhite.png")
+    avatar = Image.open("data/blackandwhite.png").convert("L")
+    avatar.save("data/blackandwhite.png")
+    await bot.send_file(ctx.message.channel,r"data/blackandwhite.png",filename="blackandwhite.png")
+
+#-------------------------------------------------------------------------------------------
 
 @bot.event
 async def on_message(message):
