@@ -260,39 +260,36 @@ class Music:
 @bot.command()
 async def comandos():
     print("Lista de Comandos")
-    message = discord.Embed(
-        title = 'Lista de comandos:',
-        colour = 0x3498db,
-        description=" \n !sobre          informacoes sobre o bot \n‍\n"
-                    " !comandos          apresenta lista de todos os comandos \n‍\n"
-                    " !pergunta          basicamente uma 8-Ball \n‍\n"
-                    " !bitcoin           apresenta o valor das bitcoin em EUR\n‍\n"
-                    " !escolhe [list]    escolhe uma das opcoes \n‍\n"
-                    " !gif [search]      procura e seleciona ao acaso um gif \n‍\n"
-                    " !pedra             pedra/papel/tesoura \n‍\n"
-                    " !role              aplica roles a users \n‍\n"
-                    "\n\n"
-                    " !play [arg]        Inicia a reproducao de um link/pesquisa \n‍\n"
-                    " !volume            permite alterar o volume do bot \n‍\n"
-                    " !playing           identifica a musica actual \n‍\n"
-                    " !skip              votacao para passar 'a frente' \n‍\n"
-                    " !pause             pausa a musica actual \n‍\n"
-                    " !resume            retoma a musica actual \n‍\n"
-                    " \n‍\n"
-                    " !topgames          mostra os jogos mais jogados \n‍\n"
-                    " !quemjoga [search] mostra quem joga o que \n‍\n"
-                    " \n‍\n"
-                    " !reverse [str]     reverte a mensagem \n‍\n"
-                    " !spam              partilha spam no chat  \n‍\n"
-                    " !spellout [str]    L E T R A  A  L E T R A  \n‍\n"
-                    " !morse [str]       converte para morse  \n‍\n"
-                    " !remorse [str]     traduz de morse  \n‍\n"
-                    " !regrasdainternet  lista das regras da internet \n‍\n"
-                    "\n\n"
-                    "!trigger            TRIGGERED \n\n"
-                    "!pretoebranco       infelismente nao e o michael jackson \n\n"
-    )
-    await bot.say(embed=message)
+    embed = discord.Embed(title = "Lista de comandos:",colour = 0x3498db)
+    embed.add_field(name="!sobre", value="informacoes sobre o bot", inline=False)
+    embed.add_field(name="!comandos", value="apresenta lista de todos os comandos", inline=False)
+    embed.add_field(name="!pergunta", value="basicamente uma 8-Ball", inline=False)
+    embed.add_field(name="!bitcoin", value="apresenta o valor das bitcoin em EUR", inline=False)
+    embed.add_field(name="!escolhe [list]", value=" escolhe uma das opcoes", inline=False)
+    embed.add_field(name="!gif [search]", value="procura e seleciona ao acaso um gif", inline=False)
+    embed.add_field(name="!pedra", value="pedra/papel/tesoura", inline=False)
+    embed.add_field(name="!role", value="aplica roles a users", inline=False)
+    embed.add_field(name="!topgames", value="mostra os jogos mais jogados pelos membros do servidor", inline=False)
+    embed.add_field(name="!quemjoga [search]", value="permite pesquisar quem joga algo", inline=False)
+    embed.add_field(name="!reverse [str]", value="reverte a mensagem", inline=False)
+    embed.add_field(name="!spam", value="partilha spam no chat", inline=False)
+    embed.add_field(name="!spellout [str]", value="L E T R A  A  L E T R A  para quando esta dificil de entender", inline=False)
+    embed.add_field(name="!morse [str]", value="converte para morse ", inline=False)
+    embed.add_field(name="!remorse [mrs]", value="converte de morse ", inline=False)
+    embed.add_field(name="!intelectual", value="InTeLeCtUaL", inline=False)
+    embed.add_field(name="!regrasdainternet", value="lista das regras da internet", inline=False)
+    embed.add_field(name="!trigger", value="Cria um meme", inline=False)
+    embed.add_field(name="!pretoebranco", value="Edita a imagem", inline=False)
+
+    embed.add_field(name="COMANDOS MUSICA",value="------------------------------",inline=False)
+    embed.add_field(name="!play [arg]", value="Inicia a reproducao de um link/pesquisa", inline=False)
+    embed.add_field(name="!volume ", value="permite alterar o volume do bot", inline=False)
+    embed.add_field(name="!playing", value="identifica a musica actual", inline=False)
+    embed.add_field(name="!skip", value="votacao para passar a frente", inline=False)
+    embed.add_field(name="!pause", value="pausa a musica atual", inline=False)
+    embed.add_field(name="!resume", value="retoma a musica actual", inline=False)
+
+    await bot.say(embed=embed)
 
 @bot.command()
 async def pergunta():
@@ -352,11 +349,10 @@ async def spam(ctx):
     await bot.send_file(ctx.message.channel, r"assets/imgs/spam.png",filename="spam.png",content="SPAM!SPAM!SPAM!SPAM!")
 
 @bot.command(pass_context=True)
-async def reverse(ctx, msg:str):
+async def reverse(ctx, *,msg:str):
     print("Contrario")
     await bot.send_message(ctx.message.channel,msg[::-1])
 
-#tem bug so funciona uma palavra
 @bot.command(pass_context=True)
 async def intelectual(ctx, *, message:str):
     print("InTeLeCtUaL")
@@ -379,7 +375,6 @@ async def morse(ctx, *,msg:str):
         mensagem_codificada += encode_morse[char] + " "
     await bot.send_message(ctx.message.channel,mensagem_codificada)
 
-#tem bug so funciona uma letra
 @bot.command(pass_context=True)
 async def remorse(ctx, *,msg:str):
     print("Traduzir morse")
@@ -396,7 +391,7 @@ async def regrasdainternet(ctx):
     await bot.send_file(ctx.message.channel,r"assets/InternetRules.txt",filename="InternetRules.txt")
 
 @bot.command(pass_context=True)
-async def spellout(ctx,msg:str):
+async def spellout(ctx, *,msg:str):
     spelloutmsg=' '.join(list(msg.upper()))
     print("S P E L L O U T")
     await bot.send_message(ctx.message.channel,spelloutmsg)
