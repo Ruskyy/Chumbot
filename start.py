@@ -12,7 +12,7 @@ import safygiphy
 import requests
 import hashlib
 
-from whoplays import whoplays
+from cogs import whoplays
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.voice_client import VoiceClient
@@ -21,6 +21,9 @@ from utils.unicode import *
 from utils.fun.lists import *
 from utils import imagetools
 from PIL import Image
+
+from cogs.jogos import JogodaGalinha
+from sys import exit
 
 BOT_PREFIX = ("!")
 
@@ -248,7 +251,7 @@ class Music:
 
     @commands.command(pass_context=True, no_pm=True)
     async def playing(self, ctx):
-        
+
         state = self.get_voice_state(ctx.message.server)
         if state.current is None:
             await self.bot.say('Mas estas burro ou que ? Nao estou a passar musica')
@@ -477,7 +480,39 @@ async def on_message(message):
         played = 1
 
     await bot.process_commands(message)
+    if message.content.lower().startswith('!jogar'):
+            await msg_desafio(message)
 
+    if message.content.lower().startswith('!colocar'):
+            await msg_posicao(message)
+
+
+
+
+async def msg_desafio(message):
+    player1 = message.author
+    player2 = bot.user
+
+    cnt = message.content.lower()
+
+    jogo = JogodaGalinha([player1, player2])
+
+    await jogo.comeco(bot, message)
+
+    jogos.append(jogo)
+
+async def msg_posicao(message):
+    player1 = message.author
+    player2 = bot.user
+    for i in range(len(jogos)):
+        j = jogos[i]
+        if message.author == j.quem_joga():
+            await j.player_jogada(bot, message)
+
+            if j.end_game():
+                del jogos[i]
+                break
+jogos = []
 
 # quando for colocado um emoji, o bot reage á mensagem que postou o emoticon
 @bot.event
