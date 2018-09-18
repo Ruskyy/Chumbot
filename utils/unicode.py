@@ -5,5 +5,3 @@ sombra = "```\n                       :PB@Bk:                         \n        
 tableflip = "(╯°□°）╯︵ ┻━┻"
 
 doubleflip = "┻━┻ ﾐヽ(ಠ益ಠ)ノ彡┻━┻"
-
-misc_weeb_face = "(・`ω´・)"

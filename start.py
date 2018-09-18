@@ -16,7 +16,6 @@ import socket
 import pythonwhois
 
 from cogs import whoplays
-from cogs import especial
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.voice_client import VoiceClient
@@ -282,33 +281,42 @@ async def comandos():
     embed.add_field(name="!reverse [str]", value="reverte a mensagem", inline=False)
     embed.add_field(name="!spam", value="partilha spam no chat", inline=False)
     embed.add_field(name="!bigmoji [emoji]", value="Arranja o emoji em tamanho grande", inline=False)
-    embed.add_field(name="!spellout [str]", value="L E T R A  A  L E T R A  para quando esta dificil de entender", inline=False)
+    embed.add_field(name="!avatar [user]", value="Devolve o avatar de um user", inline=False)
+    embed.add_field(name="!spellout [str]", value="L E T R A  A  L E T R A ", inline=False)
     embed.add_field(name="!morse [str]", value="converte para morse ", inline=False)
     embed.add_field(name="!remorse [mrs]", value="converte de morse ", inline=False)
     embed.add_field(name="!intelectual", value="InTeLeCtUaL", inline=False)
+    embed.add_field(name="!owo", value=" hehe piwinha owo", inline=False)
     embed.add_field(name="!regrasdainternet", value="lista das regras da internet", inline=False)
     embed.add_field(name="!diasatenatal", value="Quantos dias ate natal", inline=False)
     embed.add_field(name="!diasatehalloween", value="Quantos dias ate halloween", inline=False)
 
-    embed.add_field(name="COMANDOS IMAGEM",value="------------------------------",inline=False)
-    embed.add_field(name="!trigger", value="Cria um meme", inline=False)
-    embed.add_field(name="!pretoebranco", value="Edita a imagem", inline=False)
-    embed.add_field(name="!hexcolor [hex]", value="Devolve a cor", inline=False)
+    embed.add_field(name="COMANDOS WEB",value="------------------------------",inline=False)
+    embed.add_field(name="!getip [dominio]", value="Descobre o ip numerico de um host", inline=True)
+    embed.add_field(name="!estaembaixo  [dominio]", value="Verifica se o host se encontra down", inline=True)
+    embed.add_field(name="!portscan  [dominio] [porta]", value="Realiza scan com o nmap", inline=True)
 
-    embed.add_field(name="COMANDOS MUSICA",value="------------------------------",inline=False)
-    embed.add_field(name="!play [arg]", value="Inicia a reproducao de um link/pesquisa", inline=False)
-    embed.add_field(name="!volume ", value="permite alterar o volume do bot", inline=False)
-    embed.add_field(name="!playing", value="identifica a musica actual", inline=False)
-    embed.add_field(name="!skip", value="votacao para passar a frente", inline=False)
-    embed.add_field(name="!pause", value="pausa a musica atual", inline=False)
-    embed.add_field(name="!resume", value="retoma a musica actual", inline=False)
+    embed2 = discord.Embed(title = "",colour = 0x3498db)
+    embed2.add_field(name="COMANDOS IMAGEM",value="------------------------------",inline=False)
+    embed2.add_field(name="!trigger", value="Cria um meme", inline=True)
+    embed2.add_field(name="!pretoebranco", value="Edita a imagem", inline=True)
+    embed2.add_field(name="!hexcolor [hex]", value="Devolve a cor", inline=True)
 
-    embed.add_field(name="Jogos",value="------------------------------",inline=False)
-    embed.add_field(name="!pedra", value="pedra/papel/tesoura", inline=False)
-    embed.add_field(name="!jogar JogodaGalinha", value="jogo da galo", inline=False)
-    embed.add_field(name="!mover [posicao 0-9]", value="seleciona onde colocar o X no tabuleiro", inline=False)
+    embed2.add_field(name="COMANDOS MUSICA",value="------------------------------",inline=False)
+    embed2.add_field(name="!play [arg]", value="Inicia a reproducao de um link/pesquisa", inline=True)
+    embed2.add_field(name="!volume ", value="permite alterar o volume do bot", inline=True)
+    embed2.add_field(name="!playing", value="identifica a musica actual", inline=True)
+    embed2.add_field(name="!skip", value="votacao para passar a frente", inline=True)
+    embed2.add_field(name="!pause", value="pausa a musica atual", inline=True)
+    embed2.add_field(name="!resume", value="retoma a musica actual", inline=True)
+
+    embed2.add_field(name="Jogos",value="------------------------------",inline=False)
+    embed2.add_field(name="!pedra", value="pedra/papel/tesoura", inline=True)
+    embed2.add_field(name="!jogar JogodaGalinha", value="jogo do galo", inline=True)
+    embed2.add_field(name="!mover [posicao 0-9]", value="seleciona onde colocar o X no tabuleiro", inline=True)
 
     await bot.say(embed=embed)
+    await bot.say(embed=embed2)
 
 @bot.command()
 async def pergunta():
@@ -362,29 +370,64 @@ async def gif(ctx,search):
     )
     await bot.send_file(msgserver,io.BytesIO(resposta.raw.read()),filename='isto_e_um_jpeg.gif')
 
-@bot.command(pass_context=True)
-async def spotify(ctx, user:discord.Member=None):
+#-------------------------------------------------------------------------------------------
+#Ferramentas
 
-    if user is None:
-        user = ctx.message.author
-    activity = ctx.message.author.activity
-    if activity is None:
-        await bot.say(ctx.message.channel,"{} nao esta a chillar no spotify!".format(user.display_name))
+@bot.command(pass_context=True)
+async def getip(ctx, address:str):
+    respostas = [
+        'Ai de ti que hackeies isso:',
+        'So espero que nao seja o site da Kikas',
+        'Isso e bueda faci',
+        'Nao sabes memoria dinamica e ja queres hackear tu']
+    try:
+        print("getIP")
+        await bot.say(random.choice(respostas))
+        await bot.say(socket.gethostbyname(address))
+    except socket.gaierror:
+        print("getIP -erro")
+        await bot.say("Endereco invalido: {} ".format(address))
+
+@bot.command(pass_context=True)
+async def estaembaixo(ctx, *, url:str):
+
+    url = url.strip("<>")
+    if not url.startswith("http://") and not url.startswith("https://"):
+        url = "http://{}".format(url)
+    try:
+        starttime = time.time()
+        requests.get(url, timeout=3)
+        ping = " %.01f Segundos" % (time.time() - starttime)
+        await bot.say("{0}` esta online. Tempo de resposta: `{1}`".format(url, ping))
+    except:
+        await bot.say("{} esta em baixo".format(url))
+        await bot.send_file(ctx.message.channel, r"assets/imgs/down.jpg",filename="down.jpg")
+
+@bot.command(pass_context=True)
+async def portscan(ctx, host:str, ports:str):
+    forbidden_hosts = ["localhost", "0.0.0.0", "127.0.0.1"]
+
+    if '-' in ports:
+        await bot.say("Uma porta de cada vez fachavor")
         return
-    if activity.type == discord.ActivityType.listening and activity.name == "Spotify":
-        embed = discord.Embed(description="\u200b")
-        embed.add_field(name="Artista/s", value=", ".join(activity.artists))
-        embed.add_field(name="Album", value=activity.album)
-        embed.add_field(name="Duracao", value=str(activity.duration)[3:].split(".", 1)[0])
-        embed.title = "**{}**".format(activity.title)
-        embed.set_thumbnail(url=activity.album_cover_url)
-        embed.url = "https://open.spotify.com/track/{}".format(activity.track_id)
-        embed.color = activity.color
-        embed.set_footer(text="{} - esta a ouvir".format(ctx.author.display_name), icon_url=get_avatar(ctx.author))
-        await bot.say(embed=embed)
-    else:
-        await bot.say(ctx.message.channel,"{} nao esta a chillar no spotify!".format(user.display_name))
+    if host in forbidden_hosts:
+        await bot.say("Es muito espertinho tu")
         return
+    scanner = nmap.PortScanner()
+    try:
+        host = socket.gethostbyname(host)
+    except socket.gaierror:
+        await bot.say("`{}` nao e um endereco valido'".format(host))
+        return
+    ports = scanner.scan(host, ports)["scan"][host]["tcp"]
+    results = []
+    for port, data in ports.items():
+        service = data["name"]
+        if service == "":
+            service = "Desconhecido"
+        results.append("Porta {0}({1}): {2}".format(port, service, data["state"]))
+    await bot.say(xl.format("\n".join(results)))
+
 #-------------------------------------------------------------------------------------------
 
 @bot.command(pass_context=True)
@@ -410,6 +453,11 @@ async def intelectual(ctx, *, message:str):
         else:
             intellectify += char.lower()
     await bot.send_message(ctx.message.channel,intellectify)
+
+@bot.command(pass_context=True)
+async def owo(ctx, *, message:str):
+    print("owo")
+    await bot.send_message(ctx.message.channel,owoify(message))
 
 @bot.command(pass_context=True)
 async def morse(ctx, *,msg:str):
@@ -442,6 +490,7 @@ async def spellout(ctx, *,msg:str):
 
 @bot.command(pass_context=True)
 async def bigmoji(ctx, *, emote:str):
+    print("BigMoji")
     emote_id = extract_emote_id(emote)
     if emote_id is None:
         return
@@ -449,6 +498,12 @@ async def bigmoji(ctx, *, emote:str):
     if emote.startswith("<a"):
         extension = "gif"
     await bot.send_message(ctx.message.channel,"https://discordapp.com/api/emojis/{}.{}".format(emote_id, extension))
+
+@bot.command(pass_context=True)
+async def avatar(ctx, *, user:discord.User=None):
+    if user is None:
+        user = ctx.message.author
+    await bot.say("Aii estas taoo lindo {0} : {1}".format(user.name, get_avatar(user)))
 
 @bot.command(pass_context=True)
 async def diasatehalloween(ctx):
@@ -486,8 +541,8 @@ async def pretoebranco(ctx, user:discord.Member=None):
     await bot.send_file(ctx.message.channel,r"data/blackandwhite.png",filename="blackandwhite.png")
 
 @bot.command(pass_context=True)
-async def hexcolor(ctx,hexcode:str):
-
+async def hexcolor(ctx,*,hexcode:str):
+    print("Color")
     if not hexcode.startswith("#"):
         hexcode = "#{}".format(hexcode)
     try:

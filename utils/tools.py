@@ -196,7 +196,7 @@ def get_youtube_channel(service, name):
     return service.channels().list(part="snippet,statistics,brandingSettings", id=id).execute()["items"][0]
 
 def owoify(text):
-    faces = [misc_weeb_face, "w", "owo", "UwU", ">w<", "^w^"]
+    faces = ["w", "owo", "UwU", ">w<", "^w^", "o3o","OwO"]
     text = re.sub("(?:r|l)", "w", text)
     text = re.sub("(?:R|L)", "W", text)
     text = re.sub("n([aeiou])", "ny\g<1>", text)
