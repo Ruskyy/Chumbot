@@ -301,8 +301,8 @@ async def comandos():
     embed3.add_field(name="COMANDOS IMAGEM",value="------------------------------",inline=False)
     embed3.add_field(name="!trigger", value="Cria um meme", inline=True)
     embed3.add_field(name="!pretoebranco", value="Edita a imagem", inline=True)
-    embed3.add_field(name="!hexcolor [hex]", value="Devolve a cor", inline=True)
-    embed3.add_field(name="!bigmoji [emoji]", value="Arranja o emoji em tamanho grande", inline=True)
+    embed3.add_field(name="!hexcolor [hex]", value="Devolve a cor de um hex", inline=True)
+    embed3.add_field(name="!bigmoji [emoji]", value="Devolve link de um emoji", inline=True)
     embed3.add_field(name="!avatar [user]", value="Devolve o avatar de um user", inline=True)
     embed3.add_field(name="!gif [search]", value="procura e seleciona ao acaso um gif", inline=True)
 
