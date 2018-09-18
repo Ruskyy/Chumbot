@@ -269,6 +269,7 @@ class Music:
 async def comandos():
     print("Lista de Comandos")
     embed = discord.Embed(title = "Lista de comandos:",colour = 0x3498db)
+    embed.set_thumbnail(url="https://media.discordapp.net/attachments/471500310133604352/491424440643485707/settings.png")
     embed.add_field(name="!sobre", value="informacoes sobre o bot", inline=False)
     embed.add_field(name="!comandos", value="apresenta lista de todos os comandos", inline=False)
     embed.add_field(name="!pergunta", value="basicamente uma 8-Ball", inline=False)
@@ -291,32 +292,42 @@ async def comandos():
     embed.add_field(name="!diasatenatal", value="Quantos dias ate natal", inline=False)
     embed.add_field(name="!diasatehalloween", value="Quantos dias ate halloween", inline=False)
 
-    embed.add_field(name="COMANDOS WEB",value="------------------------------",inline=False)
-    embed.add_field(name="!getip [dominio]", value="Descobre o ip numerico de um host", inline=True)
-    embed.add_field(name="!estaembaixo  [dominio]", value="Verifica se o host se encontra down", inline=True)
-    embed.add_field(name="!portscan  [dominio] [porta]", value="Realiza scan com o nmap", inline=True)
-
     embed2 = discord.Embed(title = "",colour = 0x3498db)
-    embed2.add_field(name="COMANDOS IMAGEM",value="------------------------------",inline=False)
-    embed2.add_field(name="!trigger", value="Cria um meme", inline=True)
-    embed2.add_field(name="!pretoebranco", value="Edita a imagem", inline=True)
-    embed2.add_field(name="!hexcolor [hex]", value="Devolve a cor", inline=True)
+    embed2.set_thumbnail(url="https://media.discordapp.net/attachments/471500310133604352/491424437095104513/monitor.png")
+    embed2.add_field(name="COMANDOS WEB",value="------------------------------",inline=False)
+    embed2.add_field(name="!getip [dominio]", value="Descobre o ip numerico de um host", inline=True)
+    embed2.add_field(name="!estaembaixo  [dominio]", value="Verifica se o host se encontra down", inline=True)
+    embed2.add_field(name="!portscan  [dominio] [porta]", value="Realiza scan com o nmap", inline=True)
 
-    embed2.add_field(name="COMANDOS MUSICA",value="------------------------------",inline=False)
-    embed2.add_field(name="!play [arg]", value="Inicia a reproducao de um link/pesquisa", inline=True)
-    embed2.add_field(name="!volume ", value="permite alterar o volume do bot", inline=True)
-    embed2.add_field(name="!playing", value="identifica a musica actual", inline=True)
-    embed2.add_field(name="!skip", value="votacao para passar a frente", inline=True)
-    embed2.add_field(name="!pause", value="pausa a musica atual", inline=True)
-    embed2.add_field(name="!resume", value="retoma a musica actual", inline=True)
+    embed3 = discord.Embed(title = "",colour = 0x3498db)
+    embed3.set_thumbnail(url="https://media.discordapp.net/attachments/471500310133604352/491424438651453450/pictures.png")
+    embed3.add_field(name="COMANDOS IMAGEM",value="------------------------------",inline=False)
+    embed3.add_field(name="!trigger", value="Cria um meme", inline=True)
+    embed3.add_field(name="!pretoebranco", value="Edita a imagem", inline=True)
+    embed3.add_field(name="!hexcolor [hex]", value="Devolve a cor", inline=True)
 
-    embed2.add_field(name="Jogos",value="------------------------------",inline=False)
-    embed2.add_field(name="!pedra", value="pedra/papel/tesoura", inline=True)
-    embed2.add_field(name="!jogar JogodaGalinha", value="jogo do galo", inline=True)
-    embed2.add_field(name="!mover [posicao 0-9]", value="seleciona onde colocar o X no tabuleiro", inline=True)
+    embed4 = discord.Embed(title = "",colour = 0x3498db)
+    embed4.set_thumbnail(url="https://media.discordapp.net/attachments/471500310133604352/491424436436860938/keyboard.png")
+    embed4.add_field(name="COMANDOS MUSICA",value="------------------------------",inline=False)
+    embed4.add_field(name="!play [arg]", value="Inicia a reproducao de um link/pesquisa", inline=True)
+    embed4.add_field(name="!volume ", value="permite alterar o volume do bot", inline=True)
+    embed4.add_field(name="!playing", value="identifica a musica actual", inline=True)
+    embed4.add_field(name="!skip", value="votacao para passar a frente", inline=True)
+    embed4.add_field(name="!pause", value="pausa a musica atual", inline=True)
+    embed4.add_field(name="!resume", value="retoma a musica actual", inline=True)
+
+    embed5 = discord.Embed(title = "",colour = 0x3498db)
+    embed5.set_thumbnail(url="https://media.discordapp.net/attachments/471500310133604352/491424434008096768/gamepad.png")
+    embed5.add_field(name="COMANDOS JOGOS",value="------------------------------",inline=False)
+    embed5.add_field(name="!pedra", value="pedra/papel/tesoura", inline=True)
+    embed5.add_field(name="!jogar JogodaGalinha", value="jogo do galo", inline=True)
+    embed5.add_field(name="!mover [posicao 0-9]", value="seleciona onde colocar o X no tabuleiro", inline=True)
 
     await bot.say(embed=embed)
     await bot.say(embed=embed2)
+    await bot.say(embed=embed3)
+    await bot.say(embed=embed4)
+    await bot.say(embed=embed5)
 
 @bot.command()
 async def pergunta():
@@ -390,7 +401,7 @@ async def getip(ctx, address:str):
 
 @bot.command(pass_context=True)
 async def estaembaixo(ctx, *, url:str):
-
+    print("isItDown ?")
     url = url.strip("<>")
     if not url.startswith("http://") and not url.startswith("https://"):
         url = "http://{}".format(url)
@@ -406,7 +417,7 @@ async def estaembaixo(ctx, *, url:str):
 @bot.command(pass_context=True)
 async def portscan(ctx, host:str, ports:str):
     forbidden_hosts = ["localhost", "0.0.0.0", "127.0.0.1"]
-
+    print("Portscan")
     if '-' in ports:
         await bot.say("Uma porta de cada vez fachavor")
         return
@@ -501,6 +512,7 @@ async def bigmoji(ctx, *, emote:str):
 
 @bot.command(pass_context=True)
 async def avatar(ctx, *, user:discord.User=None):
+    print("BigAvatar")
     if user is None:
         user = ctx.message.author
     await bot.say("Aii estas taoo lindo {0} : {1}".format(user.name, get_avatar(user)))
