@@ -228,8 +228,8 @@ class JogodaGalinha(Jogo):
         w = self.check_win()
         if w != False:
             self.final = True
-            if w == 'X' or w == 'O': await bot.send_message(message.channel, w + ' wins.')
-            else: await bot.send_message(message.channel, 'Tie.')
+            if w == 'X' or w == 'O': await bot.send_message(message.channel, w + ' Ganhou.')
+            else: await bot.send_message(message.channel, 'Empate.')
 
     def check_win(self):
         t = self.tabuleiro

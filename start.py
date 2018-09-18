@@ -11,17 +11,21 @@ import youtube_dl
 import safygiphy
 import requests
 import hashlib
+import nmap
+import socket
+import pythonwhois
 
 from cogs import whoplays
+from cogs import especial
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.voice_client import VoiceClient
 from utils.tools import *
 from utils.unicode import *
 from utils.fun.lists import *
+from utils.logger import log
 from utils import imagetools
 from PIL import Image
-
 from cogs.jogos import JogodaGalinha
 from sys import exit
 
@@ -30,6 +34,8 @@ BOT_PREFIX = ("!")
 #Cria uma timestamp durante o boot para o sobre()
 ts = time.time()
 lastboot = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+halloween = datetime.date(2018, 10, 31)
+natal = datetime.date(2018, 12, 25)
 
 #Nao te esquecas de adicionar o token ANA
 TOKEN = 'NDcxNDk4MzAzNDMxNzcwMTIy.Dj0Yuw.g6KumUnYWn-A7P-mREODg1Fd1OQ'
@@ -270,19 +276,24 @@ async def comandos():
     embed.add_field(name="!bitcoin", value="apresenta o valor das bitcoin em EUR", inline=False)
     embed.add_field(name="!escolhe [list]", value=" escolhe uma das opcoes", inline=False)
     embed.add_field(name="!gif [search]", value="procura e seleciona ao acaso um gif", inline=False)
-    embed.add_field(name="!pedra", value="pedra/papel/tesoura", inline=False)
     embed.add_field(name="!role", value="aplica roles a users", inline=False)
     embed.add_field(name="!topgames", value="mostra os jogos mais jogados pelos membros do servidor", inline=False)
     embed.add_field(name="!quemjoga [search]", value="permite pesquisar quem joga algo", inline=False)
     embed.add_field(name="!reverse [str]", value="reverte a mensagem", inline=False)
     embed.add_field(name="!spam", value="partilha spam no chat", inline=False)
+    embed.add_field(name="!bigmoji [emoji]", value="Arranja o emoji em tamanho grande", inline=False)
     embed.add_field(name="!spellout [str]", value="L E T R A  A  L E T R A  para quando esta dificil de entender", inline=False)
     embed.add_field(name="!morse [str]", value="converte para morse ", inline=False)
     embed.add_field(name="!remorse [mrs]", value="converte de morse ", inline=False)
     embed.add_field(name="!intelectual", value="InTeLeCtUaL", inline=False)
     embed.add_field(name="!regrasdainternet", value="lista das regras da internet", inline=False)
+    embed.add_field(name="!diasatenatal", value="Quantos dias ate natal", inline=False)
+    embed.add_field(name="!diasatehalloween", value="Quantos dias ate halloween", inline=False)
+
+    embed.add_field(name="COMANDOS IMAGEM",value="------------------------------",inline=False)
     embed.add_field(name="!trigger", value="Cria um meme", inline=False)
     embed.add_field(name="!pretoebranco", value="Edita a imagem", inline=False)
+    embed.add_field(name="!hexcolor [hex]", value="Devolve a cor", inline=False)
 
     embed.add_field(name="COMANDOS MUSICA",value="------------------------------",inline=False)
     embed.add_field(name="!play [arg]", value="Inicia a reproducao de um link/pesquisa", inline=False)
@@ -291,6 +302,11 @@ async def comandos():
     embed.add_field(name="!skip", value="votacao para passar a frente", inline=False)
     embed.add_field(name="!pause", value="pausa a musica atual", inline=False)
     embed.add_field(name="!resume", value="retoma a musica actual", inline=False)
+
+    embed.add_field(name="Jogos",value="------------------------------",inline=False)
+    embed.add_field(name="!pedra", value="pedra/papel/tesoura", inline=False)
+    embed.add_field(name="!jogar JogodaGalinha", value="jogo da galo", inline=False)
+    embed.add_field(name="!mover [posicao 0-9]", value="seleciona onde colocar o X no tabuleiro", inline=False)
 
     await bot.say(embed=embed)
 
@@ -334,7 +350,7 @@ async def sobre():
     embed.set_footer(text="Chumbados")
     await bot.say(embed=embed)
 
-
+#External APIs
 @bot.command(pass_context=True)
 async def gif(ctx,search):
     print("Random Gif")
@@ -345,6 +361,31 @@ async def gif(ctx,search):
     str(resultquerrygif.get('data',{}).get('image_original_url')),stream=True
     )
     await bot.send_file(msgserver,io.BytesIO(resposta.raw.read()),filename='isto_e_um_jpeg.gif')
+
+@bot.command(pass_context=True)
+async def spotify(ctx, user:discord.Member=None):
+
+    if user is None:
+        user = ctx.message.author
+    activity = ctx.message.author.activity
+    if activity is None:
+        await bot.say(ctx.message.channel,"{} nao esta a chillar no spotify!".format(user.display_name))
+        return
+    if activity.type == discord.ActivityType.listening and activity.name == "Spotify":
+        embed = discord.Embed(description="\u200b")
+        embed.add_field(name="Artista/s", value=", ".join(activity.artists))
+        embed.add_field(name="Album", value=activity.album)
+        embed.add_field(name="Duracao", value=str(activity.duration)[3:].split(".", 1)[0])
+        embed.title = "**{}**".format(activity.title)
+        embed.set_thumbnail(url=activity.album_cover_url)
+        embed.url = "https://open.spotify.com/track/{}".format(activity.track_id)
+        embed.color = activity.color
+        embed.set_footer(text="{} - esta a ouvir".format(ctx.author.display_name), icon_url=get_avatar(ctx.author))
+        await bot.say(embed=embed)
+    else:
+        await bot.say(ctx.message.channel,"{} nao esta a chillar no spotify!".format(user.display_name))
+        return
+#-------------------------------------------------------------------------------------------
 
 @bot.command(pass_context=True)
 async def spam(ctx):
@@ -399,6 +440,26 @@ async def spellout(ctx, *,msg:str):
     print("S P E L L O U T")
     await bot.send_message(ctx.message.channel,spelloutmsg)
 
+@bot.command(pass_context=True)
+async def bigmoji(ctx, *, emote:str):
+    emote_id = extract_emote_id(emote)
+    if emote_id is None:
+        return
+    extension = "png"
+    if emote.startswith("<a"):
+        extension = "gif"
+    await bot.send_message(ctx.message.channel,"https://discordapp.com/api/emojis/{}.{}".format(emote_id, extension))
+
+@bot.command(pass_context=True)
+async def diasatehalloween(ctx):
+    print("Dias ate halloween")
+    await bot.send_message(ctx.message.channel,"Sabes que não precisas de mascara:: {}".format((halloween - datetime.date.today()).days))
+
+@bot.command(pass_context=True)
+async def diasatenatal(ctx):
+    print("Dias ate natal")
+    await bot.send_message(ctx.message.channel,"É bom que peças uma mota da telepizza : {}".format((natal - datetime.date.today()).days))
+
 #-------------------------------------------------------------------------------------------
 #Edi'cao de imagem
 @bot.command(pass_context=True)
@@ -423,6 +484,18 @@ async def pretoebranco(ctx, user:discord.Member=None):
     avatar = Image.open("data/blackandwhite.png").convert("L")
     avatar.save("data/blackandwhite.png")
     await bot.send_file(ctx.message.channel,r"data/blackandwhite.png",filename="blackandwhite.png")
+
+@bot.command(pass_context=True)
+async def hexcolor(ctx,hexcode:str):
+
+    if not hexcode.startswith("#"):
+        hexcode = "#{}".format(hexcode)
+    try:
+        Image.new("RGBA", (50, 50), hexcode).save("data/color.png")
+    except ValueError:
+        await bot.say(ctx.message.channel,"Codigo hex invalido: {}".format(hexcode))
+        return
+    await bot.send_file(ctx.message.channel,r"data/color.png", filename="{}.png".format(hexcode.strip("#")))
 
 #-------------------------------------------------------------------------------------------
 
