@@ -275,14 +275,11 @@ async def comandos():
     embed.add_field(name="!pergunta", value="basicamente uma 8-Ball", inline=False)
     embed.add_field(name="!bitcoin", value="apresenta o valor das bitcoin em EUR", inline=False)
     embed.add_field(name="!escolhe [list]", value=" escolhe uma das opcoes", inline=False)
-    embed.add_field(name="!gif [search]", value="procura e seleciona ao acaso um gif", inline=False)
     embed.add_field(name="!role", value="aplica roles a users", inline=False)
     embed.add_field(name="!topgames", value="mostra os jogos mais jogados pelos membros do servidor", inline=False)
     embed.add_field(name="!quemjoga [search]", value="permite pesquisar quem joga algo", inline=False)
     embed.add_field(name="!reverse [str]", value="reverte a mensagem", inline=False)
     embed.add_field(name="!spam", value="partilha spam no chat", inline=False)
-    embed.add_field(name="!bigmoji [emoji]", value="Arranja o emoji em tamanho grande", inline=False)
-    embed.add_field(name="!avatar [user]", value="Devolve o avatar de um user", inline=False)
     embed.add_field(name="!spellout [str]", value="L E T R A  A  L E T R A ", inline=False)
     embed.add_field(name="!morse [str]", value="converte para morse ", inline=False)
     embed.add_field(name="!remorse [mrs]", value="converte de morse ", inline=False)
@@ -305,6 +302,9 @@ async def comandos():
     embed3.add_field(name="!trigger", value="Cria um meme", inline=True)
     embed3.add_field(name="!pretoebranco", value="Edita a imagem", inline=True)
     embed3.add_field(name="!hexcolor [hex]", value="Devolve a cor", inline=True)
+    embed3.add_field(name="!bigmoji [emoji]", value="Arranja o emoji em tamanho grande", inline=True)
+    embed3.add_field(name="!avatar [user]", value="Devolve o avatar de um user", inline=True)
+    embed3.add_field(name="!gif [search]", value="procura e seleciona ao acaso um gif", inline=True)
 
     embed4 = discord.Embed(title = "",colour = 0x3498db)
     embed4.set_thumbnail(url="https://media.discordapp.net/attachments/471500310133604352/491424436436860938/keyboard.png")
@@ -520,7 +520,7 @@ async def avatar(ctx, *, user:discord.User=None):
 @bot.command(pass_context=True)
 async def diasatehalloween(ctx):
     print("Dias ate halloween")
-    await bot.send_message(ctx.message.channel,"Sabes que não precisas de mascara:: {}".format((halloween - datetime.date.today()).days))
+    await bot.send_message(ctx.message.channel,"Sabes que não precisas de mascara : {}".format((halloween - datetime.date.today()).days))
 
 @bot.command(pass_context=True)
 async def diasatenatal(ctx):
